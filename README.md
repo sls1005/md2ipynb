@@ -55,7 +55,7 @@ This does not check the syntax however, so it also turns things like
 
 into code cells (even if it isn't correct Python), as long as the identifier matches.
 
-Everything else (including a code block of a different programming language) in the input file will be placed into Markdown cells. When creating a Markdown cell, the leading blank lines (that contain only line breaks) will be removed. If a Markdown cell would contain only blank lines, it is not created. This prevents creating a large number of empty cells.
+Everything else (including a code block of a different programming language) in the input file will be placed into Markdown cells. When creating a Markdown cell, the leading blank lines (that contain only line breaks) will be removed. If a Markdown cell would contain only blank lines, it is not created. This prevents creating a large number of empty cells by accident.
 
 ### References
 
