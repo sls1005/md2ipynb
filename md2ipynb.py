@@ -50,7 +50,7 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
     for line in input_file:
         if in_code_block:
             if block_end.search(line): # != None
-                output_file.write('","outputs": []}')
+                output_file.write('","outputs":[]}')
                 in_code_block = False
             else:
                 #assert line[-1] == '\n'
@@ -60,9 +60,7 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
                 else:
                     c = '\n'
                 output_file.write(to_json(c + line[:-1])[1:-1])
-        elif code_block_start.search(line):
-            if in_other_block:
-                continue
+        elif code_block_start.search(line) and not in_other_block:
             if in_markdown:
                 output_file.write('"}')
                 in_markdown = False
@@ -102,7 +100,7 @@ def main():
     input_file_name = ''
     output_file_name = ''
     language = 'python'
-    language_identifier = 'python'
+    language_identifier = ''
     kernel = 'python3'
     encoding = 'UTF-8'
     overwrite = False
@@ -172,6 +170,8 @@ def main():
     if exists(output_file_name) and not overwrite:
         stderr.write("[Error] '%s' exists. Use '--overwrite' to overwrite it.\n" % output_file_name)
         exit(2)
+    if language_identifier == '':
+        language_identifier = language
 
     convert(input_file_name, output_file_name, input_file_encoding=encoding, language=language, language_identifier=language_identifier, kernel=kernel)
 
