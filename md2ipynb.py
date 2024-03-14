@@ -29,10 +29,12 @@ options:
 
 def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', output_file_encoding = 'UTF-8', language = 'python', language_identifier = 'python', kernel = 'python3'):
     code_block_start = re.compile("^(\\x20){0,3}```(\\s)*" + language_identifier + "(\\s)*$")
-    other_block_start = re.compile("^(\\x20){0,3}```")
+    other_block_start1 = re.compile("^(\\x20){0,3}```")
+    other_block_start2 = re.compile("^(\\x20){0,3}````")
     block_end = re.compile("^(\\x20){0,3}```(\\s)*$")
+    block_end2 = re.compile("^(\\x20){0,3}````(\\s)*$")
     in_code_block = False
-    in_other_block = False
+    in_other_block = 0
     in_markdown = False
     at_start = True
     at_start_of_code_block = False
@@ -73,11 +75,13 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
             at_start_of_code_block = True
         elif in_markdown:
             if in_other_block:
-                if block_end.search(line):
-                    in_other_block = False
+                if [block_end, block_end2][in_other_block - 1].search(line):
+                    in_other_block = 0
             else:
-                if other_block_start.search(line):
-                    in_other_block = True
+                if other_block_start2.search(line):
+                    in_other_block = 2
+                elif other_block_start1.search(line):
+                    in_other_block = 1
             output_file.write(to_json(line)[1:-1])
         else:
             if line == '\n':
