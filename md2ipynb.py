@@ -40,7 +40,8 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
     at_start_of_code_block = False
     metadata = {
         'kernelspec': {
-            'name': kernel
+            'name': kernel,
+            'display_name': kernel
         },
         'language_info': {
             'name': language
@@ -52,7 +53,7 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
     for line in input_file:
         if in_code_block:
             if block_end.search(line): # != None
-                output_file.write('","outputs":[]}')
+                output_file.write('"}')
                 in_code_block = False
             else:
                 #assert line[-1] == '\n'
@@ -70,7 +71,7 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
                 at_start = False
             else:
                 output_file.write(',\n')
-            output_file.write('{"cell_type":"code","metadata":{},"source":"')
+            output_file.write('{"cell_type":"code","metadata":{},"execution_count":null,"outputs":[],"source":"')
             in_code_block = True
             at_start_of_code_block = True
         elif in_markdown:
@@ -92,10 +93,8 @@ def convert(input_file_name, output_file_name, input_file_encoding = 'UTF-8', ou
                 output_file.write(',\n')
             output_file.write('{"cell_type":"markdown","metadata":{},"source":"' + to_json(line)[1:-1])
             in_markdown = True
-    if in_markdown:
+    if in_code_block or in_markdown:
         output_file.write('"}')
-    elif in_code_block:
-        output_file.write('","outputs":[]}')
     input_file.close()
     output_file.write('],\n"metadata":' + to_json(metadata) + '}')
     output_file.close()
